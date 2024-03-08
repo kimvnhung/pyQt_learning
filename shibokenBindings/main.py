@@ -1,56 +1,38 @@
-from Universe import Icecream, Truck
+import sys
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton
 
-class VanillaChocolateIcecream(Icecream):
-    def __init__(self, flavor=""):
-        super(VanillaChocolateIcecream, self).__init__(flavor)
 
-    def clone(self):
-        return VanillaChocolateIcecream(self.getFlavor())
+class CustomWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
-    def getFlavor(self):
-        return "vanilla sprinked with chocolate"
+        self.label = QLabel("Custom Widget", self)
+        self.button = QPushButton("Click Me", self)
+        self.button.clicked.connect(self.on_button_clicked)
 
-class VanillaChocolateCherryIcecream(VanillaChocolateIcecream):
-    def __init__(self, flavor=""):
-        super(VanillaChocolateIcecream, self).__init__(flavor)
+        layout = QVBoxLayout()
+        layout.addWidget(self.label)
+        layout.addWidget(self.button)
 
-    def clone(self):
-        return VanillaChocolateCherryIcecream(self.getFlavor())
+        self.setLayout(layout)
 
-    def getFlavor(self):
-        base_flavor = super(VanillaChocolateCherryIcecream, self).getFlavor()
-        return base_flavor + " and a cherry"
+    def on_button_clicked(self):
+        self.label.setText("Button Clicked!")
 
-if __name__ == '__main__':
-    leave_on_destruction = True
-    truck = Truck(leave_on_destruction)
 
-    flavors = ["vanilla", "chocolate", "strawberry"]
-    for f in flavors:
-        icecream = Icecream(f)
-        truck.addIcecreamFlavor(icecream)
+class CustomWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
-    truck.addIcecreamFlavor(VanillaChocolateIcecream())
-    truck.addIcecreamFlavor(VanillaChocolateCherryIcecream())
+        self.setWindowTitle("Custom Window")
 
-    truck.arrive()
-    truck.printAvailableFlavors()
-    result = truck.deliver()
+        self.custom_widget = CustomWidget()
+        self.setCentralWidget(self.custom_widget)
 
-    if result:
-        print("All the kids got some icecream!")
-    else:
-        print("Aww, someone didn't get the flavor they wanted...")
 
-    if not result:
-        special_truck = Truck(truck)
-        del truck
-
-        print("")
-        special_truck.setArrivalMessage("A new SPECIAL icecream truck has arrived!\n")
-        special_truck.arrive()
-        special_truck.addIcecreamFlavor(Icecream("SPECIAL *magical* icecream"))
-        special_truck.printAvailableFlavors()
-        special_truck.deliver()
-        print("Now everyone got the flavor they wanted!")
-        special_truck.leave()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = CustomWindow()
+    window.setGeometry(100, 100, 400, 300)
+    window.show()
+    sys.exit(app.exec())
