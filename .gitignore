@@ -161,4 +161,4 @@ cython_debug/
 
 *.dll
 .vscode
-*/bindings.xml
+**/bindings.xml

@@ -9,8 +9,11 @@ if(POLICY CMP0068)
   cmake_policy(SET CMP0068 NEW)
 endif()
 
+# Get the name of the folder containing the CMakeLists.txt file
+get_filename_component(DYNAMIC_PR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+
 # Consider changing the project name to something relevant for you.
-project(SampleBinding)
+project(${DYNAMIC_PR_NAME})
 
 # ================================ General configuration ======================================
 
@@ -105,11 +108,15 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # The sample library for which we will create bindings. You can change the name to something
 # relevant for your project.
-set(sample_library "libuniverse")
+set(sample_library "lib${PROJECT_NAME}")
 
 # The name of the generated bindings module (as imported in Python). You can change the name
 # to something relevant for your project.
-set(bindings_library "Universe")
+set(bindings_library "${PROJECT_NAME}")
+
+include("../cmake/generate_bindings.cmake")
+
+
 
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
@@ -126,7 +133,7 @@ set(typesystem_file ${CMAKE_SOURCE_DIR}/bindings.xml)
 # and a '.cpp' file per C++ type. These are needed for generating the module shared
 # library.
 set(generated_sources
-    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/universe_module_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/${PROJECT_NAME}_module_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/icecream_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/truck_wrapper.cpp)
 

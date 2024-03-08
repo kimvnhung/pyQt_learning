@@ -3,7 +3,7 @@
 // Copyright (C) 2021 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 -->
-<typesystem package="Universe">
+<typesystem package="@PROJECT_NAME@">
 
     <object-type name="Icecream">
         <!-- By default the ownership of an object created in Python is tied
