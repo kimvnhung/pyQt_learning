@@ -82,6 +82,9 @@ options.append(("--pyside-shared-libraries-qmake",
 options.append(("--pyside-shared-libraries-cmake",
                 lambda: get_shared_libraries_cmake(Package.PYSIDE_MODULE), pyside_libs_error,
                 f"Print paths of {PYSIDE_MODULE} shared libraries (.so's, .dylib's, .dll's) for cmake"))
+options.append(("--typesystem-paths",
+                lambda: find_typesystem_paths(),pyside_error,
+                f"Print {PYSIDE_MODULE} location"))
 
 options_usage = ''
 for i, (flag, _, _, description) in enumerate(options):
@@ -166,6 +169,8 @@ def link_option(lib):
 def find_pyside():
     return find_package_path(PYSIDE_MODULE)
 
+def find_typesystem_paths():
+    return find_pyside()+'/typesystems';
 
 def find_shiboken_module():
     return find_package_path(SHIBOKEN)

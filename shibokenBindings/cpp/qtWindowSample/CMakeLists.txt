@@ -4,6 +4,14 @@
 cmake_minimum_required(VERSION 3.18)
 cmake_policy(VERSION 3.18)
 
+# Set CPP standard to C++17 minimum.
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Enable policy to not use RPATH settings for install_name on macOS.
 if(POLICY CMP0068)
   cmake_policy(SET CMP0068 NEW)
@@ -17,11 +25,10 @@ project(${DYNAMIC_PR_NAME})
 
 # ================================ General configuration ======================================
 
-# Set CPP standard to C++17 minimum.
-set(CMAKE_CXX_STANDARD 17)
+
 set(CONSUMER_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
 
 
 
@@ -82,6 +89,8 @@ pyside_config(--python-include-path python_include_dir)
 pyside_config(--shiboken-generator-include-path shiboken_include_dir 1)
 pyside_config(--shiboken-module-shared-libraries-cmake shiboken_shared_libraries 0)
 pyside_config(--python-link-flags-cmake python_linking_data 0)
+pyside_config(--typesystem-paths typesystem_paths)
+message("typesystem : " ${typesystem_paths})
 
 set(shiboken_path "${shiboken_generator_path}/shiboken6${CMAKE_EXECUTABLE_SUFFIX}")
 if(NOT EXISTS ${shiboken_path})
@@ -116,8 +125,7 @@ set(sample_library "lib${PROJECT_NAME}")
 # to something relevant for your project.
 set(bindings_library "${PROJECT_NAME}")
 
-# include("../cmake/generate_bindings.cmake")
-# generate_binding(${CMAKE_CURRENT_SOURCE_DIR} bindings_template bindings)
+
 configure_file(bindings.xml.in bindings.xml)
 
 
@@ -138,7 +146,9 @@ set(typesystem_file ${CMAKE_BINARY_DIR}/bindings.xml)
 set(generated_sources
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/${PROJECT_NAME}_module_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/icecream_wrapper.cpp
-    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/truck_wrapper.cpp)
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/truck_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${bindings_library}/custom_widget_wrapper.cpp
+)
 
 
 # Define the sample shared library for which we will create bindings.
@@ -151,7 +161,9 @@ file(GLOB_RECURSE ${sample_library}_headers ${SOURCE_DIR}/*.h)
 add_library(${sample_library} SHARED ${${sample_library}_sources} ${${sample_library}_headers})
 target_link_libraries(${sample_library}
     PRIVATE
+        Qt6::Core
         Qt6::Widgets
+        Qt6::Gui
 )
 set_property(TARGET ${sample_library} PROPERTY PREFIX "")
 
@@ -170,9 +182,12 @@ set(shiboken_options --generator-set=shiboken --enable-parent-ctor-heuristic
     -I${CMAKE_SOURCE_DIR}
     -T${CMAKE_SOURCE_DIR}
     --output-directory=${CMAKE_CURRENT_BINARY_DIR}
+    --typesystem-paths=${typesystem_paths}
     )
 
 set(generated_sources_dependencies ${wrapped_header} ${typesystem_file})
+
+# message("shiboken options : " ${shiboken_options})
 
 # Add custom target to run shiboken to generate the binding cpp files.
 add_custom_command(OUTPUT ${generated_sources}
@@ -199,7 +214,13 @@ target_include_directories(${bindings_library} PRIVATE ${shiboken_include_dir})
 target_include_directories(${bindings_library} PRIVATE ${CMAKE_SOURCE_DIR})
 
 target_link_libraries(${bindings_library} PRIVATE ${shiboken_shared_libraries})
-target_link_libraries(${bindings_library} PRIVATE ${sample_library})
+target_link_libraries(${bindings_library}
+    PRIVATE
+        ${sample_library}
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Gui
+)
 
 # Adjust the name of generated module.
 set_property(TARGET ${bindings_library} PROPERTY PREFIX "")
