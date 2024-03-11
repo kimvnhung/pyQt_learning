@@ -5,9 +5,8 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 -->
 <typesystem package="${PROJECT_NAME}">
-    <load-typesystem name="typesystem_core.xml" generate="no"/>
-    <load-typesystem name="typesystem_widgets.xml" generate="yes"/>
-    <load-typesystem name="typesystem_gui.xml" generate="yes"/>
+    <load-typesystem name="typesystem_widgets.xml" generate="no"/>
+    <load-typesystem name="typesystem_gui.xml" generate="no"/>
     <object-type name="Icecream">
         <!-- By default the ownership of an object created in Python is tied
              to the Python name pointing to it. In order for the underlying
@@ -31,8 +30,8 @@
         </modify-function>
     </value-type>
 
-    <object-type name="CustomWidget">
+    <value-type name="CustomWidget">
 
-    </object-type>
+    </value-type>
 
 </typesystem>

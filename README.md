@@ -17,3 +17,7 @@
 ## Run to Test imported
 
     - python main.py
+
+## Python setup
+
+    - python setup.py install --build-docs --qtpaths=/usr/lib/qt6/bin/qtpaths --qt-src-dir=/path/to/qt6/qtbase --ignore-git --parallel=8
