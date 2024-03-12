@@ -6,6 +6,7 @@
 -->
 <typesystem package="${PROJECT_NAME}">
     <load-typesystem name="typesystem_widgets.xml" generate="no"/>
+    <load-typesystem name="typesystem_core.xml" generate="no"/>
     <load-typesystem name="typesystem_gui.xml" generate="no"/>
     <object-type name="Icecream">
         <!-- By default the ownership of an object created in Python is tied

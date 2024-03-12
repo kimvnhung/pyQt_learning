@@ -8,10 +8,14 @@ class BINDINGS_API CustomWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit CustomWidget(QWidget *parent = nullptr);
-    // ~CustomWidget();
+    explicit CustomWidget();
+    CustomWidget(const CustomWidget &other);
+    CustomWidget& operator=(const CustomWidget &other);
+    CustomWidget(CustomWidget &&other);
+    CustomWidget& operator=(CustomWidget &&other);
 
-signals:
+    ~CustomWidget();
+
 };
 
 #endif // CUSTOMWIDGET_H
