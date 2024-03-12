@@ -163,4 +163,4 @@ cython_debug/
 .vscode
 **/bindings.xml
 **build-**
-**.txt.user
+*.txt.user
