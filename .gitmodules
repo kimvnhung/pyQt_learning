@@ -1,3 +1,6 @@
 [submodule "pyside-setup"]
 	path = pyside-setup
 	url = git://code.qt.io/pyside/pyside-setup.git
+[submodule "shibokenBindings/cpp/qtWindowSample/QtAVPlayer"]
+	path = shibokenBindings/cpp/qtWindowSample/QtAVPlayer
+	url = https://github.com/kimvnhung/QtAVPlayerCMake.git
