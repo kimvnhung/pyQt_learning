@@ -48,6 +48,5 @@ void CustomWidget::play(const char* url)
     m_listWidget.append(m_videoWidget);
     layout()->addWidget(m_videoWidget);
     m_player->setSource(QUrl(url));
-    m_player->setPlaybackRate(1);
     m_player->play();
 }

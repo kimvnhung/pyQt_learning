@@ -219,6 +219,14 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # !!! End of dubious section.
 # =============================================================================================
 
+# ====================================== Custom Library =======================================
+add_subdirectory(QtAVPlayer)
+
+# ====================================== End Config Custom Lib ================================
+
+
+
+
 # Add the rest of the sources.
 add_library(${LIBRARY_NAME} SHARED ${SOURCES} ${HEADERS})
 target_link_libraries(${LIBRARY_NAME}
@@ -229,6 +237,7 @@ target_link_libraries(${LIBRARY_NAME}
         Qt6::Multimedia
         Qt6::MultimediaWidgets
         Qt6::Network
+        qt_av_player
 )
 set_property(TARGET ${LIBRARY_NAME} PROPERTY PREFIX "")
 
