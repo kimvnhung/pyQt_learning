@@ -1,6 +1,8 @@
 #ifndef CUSTOMWIDGET_H
 #define CUSTOMWIDGET_H
 
+#include <QMediaPlayer>
+#include <QVideoWidget>
 #include <QWidget>
 #include "../macros.h"
 
@@ -15,6 +17,11 @@ public:
     CustomWidget& operator=(CustomWidget &&other);
 
     ~CustomWidget();
+    void print(const char* msg);
+    void play(const char* url);
+private:
+    QList<QVideoWidget*> m_listWidget;
+    QList<QMediaPlayer*> m_listPlayer;
 
 };
 

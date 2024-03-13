@@ -27,7 +27,7 @@ project(${DYNAMIC_PR_NAME})
 # ================================ General configuration ======================================
 set(CONSUMER_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../")
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Network Multimedia MultimediaWidgets)
 
 # ================================== Shiboken detection ======================================
 # Use provided python interpreter if given.
@@ -106,8 +106,23 @@ endif()
 
 # Get all relevant Qt include dirs, to pass them on to shiboken.
 get_property(QT_WIDGETS_INCLUDE_DIRS TARGET Qt6::Widgets PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+get_property(QT_MULTIMEDIA_INCLUDE_DIRS TARGET Qt6::Multimedia PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+get_property(QT_MULTIMEDIA_WIDGETS_INCLUDE_DIRS TARGET Qt6::MultimediaWidgets PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+get_property(QT_NETWORK_INCLUDE_DIRS TARGET Qt6::Network PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
 set(INCLUDES "")
 foreach(INCLUDE_DIR ${QT_WIDGETS_INCLUDE_DIRS})
+    list(APPEND INCLUDES "-I${INCLUDE_DIR}")
+endforeach()
+
+foreach(INCLUDE_DIR ${QT_MULTIMEDIA_INCLUDE_DIRS})
+    list(APPEND INCLUDES "-I${INCLUDE_DIR}")
+endforeach()
+
+foreach(INCLUDE_DIR ${QT_MULTIMEDIA_WIDGETS_INCLUDE_DIRS})
+    list(APPEND INCLUDES "-I${INCLUDE_DIR}")
+endforeach()
+
+foreach(INCLUDE_DIR ${QT_NETWORK_INCLUDE_DIRS})
     list(APPEND INCLUDES "-I${INCLUDE_DIR}")
 endforeach()
 
@@ -184,7 +199,10 @@ set(PYSIDE_ADDITIONAL_INCLUDES "")
 foreach(INCLUDE_DIR ${PYSIDE_INCLUDE_DIR})
     list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtCore")
     list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtGui")
+    list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtMultimedia")
+    list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtMultimediaWidgets")
     list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtWidgets")
+    list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtNetwork")
 endforeach()
 
 # =============================================================================================
@@ -206,8 +224,11 @@ add_library(${LIBRARY_NAME} SHARED ${SOURCES} ${HEADERS})
 target_link_libraries(${LIBRARY_NAME}
     PRIVATE
         Qt6::Core
-        Qt6::Widgets
         Qt6::Gui
+        Qt6::Widgets
+        Qt6::Multimedia
+        Qt6::MultimediaWidgets
+        Qt6::Network
 )
 set_property(TARGET ${LIBRARY_NAME} PROPERTY PREFIX "")
 
@@ -215,6 +236,29 @@ set_property(TARGET ${LIBRARY_NAME} PROPERTY PREFIX "")
 # library can't link to the sample library.
 target_compile_definitions(${LIBRARY_NAME} PRIVATE BINDINGS_BUILD)
 target_include_directories(${LIBRARY_NAME} PRIVATE ${INCLUDES})
+target_include_directories(${LIBRARY_NAME} PUBLIC ${HEADERS})
+
+# ==================================== For testing ====================================
+set(TEST_PROGRAM ${PROJECT_NAME}_test)
+add_executable(${TEST_PROGRAM} main.cpp)
+target_link_libraries(${TEST_PROGRAM}
+    PRIVATE
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        Qt6::Multimedia
+        Qt6::MultimediaWidgets
+        Qt6::Network
+        ${LIBRARY_NAME}
+)
+
+target_include_directories(${TEST_PROGRAM}
+    PRIVATE
+        ${HEADERS}
+)
+
+
+# =======================================================================================
 
 
 # Set the cpp files which will be used for the bindings library.
@@ -235,7 +279,11 @@ target_link_libraries(${BINDING_NAME}
     PRIVATE
         ${LIBRARY_NAME}
         Qt6::Core
+        Qt6::Gui
         Qt6::Widgets
+        Qt6::Multimedia
+        Qt6::MultimediaWidgets
+        Qt6::Network
 )
 target_link_libraries(${BINDING_NAME} PRIVATE ${SHIBOKEN_MODULE_SHARED_LIBRARIES})
 target_link_libraries(${BINDING_NAME} PRIVATE ${PYSIDE_SHARED_LIBRARIES})
@@ -332,7 +380,8 @@ message("libraryName " ${LIBRARY_NAME})
 install(TARGETS ${BINDING_NAME} ${LIBRARY_NAME}
         LIBRARY DESTINATION ${CONSUMER_LIB_DIR}
         RUNTIME DESTINATION ${CONSUMER_LIB_DIR}
-        )
+        INCLUDES DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}
+)
 install(FILES ${WINDOWS_SHIBOKEN_SHARED_LIBRARIES} DESTINATION ${CONSUMER_LIB_DIR})
 # =============================================================================================
 # !!! End of dubious section.
