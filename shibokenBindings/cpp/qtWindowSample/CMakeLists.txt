@@ -221,6 +221,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # ====================================== Custom Library =======================================
 add_subdirectory(QtAVPlayer)
+# find_package(QtAVPlayer REQUIRED)
 
 # ====================================== End Config Custom Lib ================================
 
@@ -237,8 +238,10 @@ target_link_libraries(${LIBRARY_NAME}
         Qt6::Multimedia
         Qt6::MultimediaWidgets
         Qt6::Network
-        qt_av_player
+    PUBLIC
+        QtAVPlayer
 )
+target_include_directories(${LIBRARY_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 set_property(TARGET ${LIBRARY_NAME} PROPERTY PREFIX "")
 
 # Needed mostly on Windows to export symbols, and create a .lib file, otherwise the binding
