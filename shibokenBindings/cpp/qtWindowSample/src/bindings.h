@@ -4,8 +4,6 @@
 #ifndef BINDINGS_H
 #define BINDINGS_H
 
-#include "icecream.h"
-#include "truck.h"
 #include "ui/customwidget.h"
 
 #endif // BINDINGS_H

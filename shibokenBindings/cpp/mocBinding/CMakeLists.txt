@@ -42,3 +42,4 @@ endmacro()
 
 set(INCLUDES "")
 add_qt_include_dirs(Core Widgets Multimedia MultimediaWidgets Network Concurrent)
+
