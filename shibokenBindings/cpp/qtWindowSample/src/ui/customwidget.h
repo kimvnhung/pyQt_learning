@@ -21,7 +21,7 @@ public:
     ~CustomWidget();
     void print(const char* msg);
     void play(const char* url);
-private Q_SLOTS:
+public Q_SLOTS:
     void videoFrame(int index, const QAVVideoFrame &frame);
 private:
     QList<QVideoWidget*> m_listWidget;

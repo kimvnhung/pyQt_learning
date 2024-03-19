@@ -4,6 +4,7 @@
 #ifndef BINDINGS_H
 #define BINDINGS_H
 
-#include "ui/customwidget.h"
+#include "myplayer.h""
+
 
 #endif // BINDINGS_H

@@ -8,12 +8,16 @@ class AVPlayerManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit AVPlayerManager(QObject *parent = nullptr,QStringList urls = QStringList());
+    explicit AVPlayerManager(QStringList urls = QStringList());
+    AVPlayerManager(const AVPlayerManager &other);
+    AVPlayerManager& operator=(const AVPlayerManager &other);
+    AVPlayerManager(AVPlayerManager &&other);
+    AVPlayerManager& operator=(AVPlayerManager &&other);
     ~AVPlayerManager();
 
-signals:
-    void videoFrame(int index, const QAVVideoFrame &frame);
-public slots:
+Q_SIGNALS:
+    void videoFrame(int index, const void *frame);
+public Q_SLOTS:
     void play();
 private:
     QList<QAVPlayer*> m_players;

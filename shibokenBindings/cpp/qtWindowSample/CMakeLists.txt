@@ -173,7 +173,9 @@ set(SHIBOKEN_OPTIONS
 set(GENERATED_SOURCES
     ${CMAKE_CURRENT_BINARY_DIR}/${BINDING_NAME}/${PROJECT_NAME}_module_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${BINDING_NAME}/customwidget_wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${BINDING_NAME}/myplayer_wrapper.cpp
     # ${CMAKE_CURRENT_BINARY_DIR}/${BINDING_NAME}/avplayermanager_wrapper.cpp
+    # ${CMAKE_CURRENT_BINARY_DIR}/${BINDING_NAME}/qavvideoframe_wrapper.cpp
 )
 
 set(GENERATED_SOURCES_DEPENDENCIES

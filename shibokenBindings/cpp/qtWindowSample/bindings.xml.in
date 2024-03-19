@@ -16,4 +16,6 @@
     <value-type name="CustomWidget">
     </value-type>
 
+    <value-type name="MyPlayer">
+    </value-type>
 </typesystem>
