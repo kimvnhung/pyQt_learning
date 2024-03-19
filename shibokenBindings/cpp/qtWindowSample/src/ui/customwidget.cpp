@@ -134,8 +134,8 @@ void CustomWidget::play(const char* url)
     m_player->play();
 }
 
-// void CustomWidget::videoFrame(int index,const QAVVideoFrame &frame)
-// {
-//     QVideoFrame videoFrame = frame;
-//     m_listWidget.at(index)->videoSink()->setVideoFrame(videoFrame);
-// }
+void CustomWidget::videoFrame(int index,const QAVVideoFrame &frame)
+{
+    QVideoFrame videoFrame = frame;
+    m_listWidget.at(index)->videoSink()->setVideoFrame(videoFrame);
+}

@@ -242,6 +242,8 @@ target_include_directories(${LIBRARY_NAME}
 set(ENABLE_MULTIMEDIA "TRUE")
 add_subdirectory(QtAVPlayer)
 target_link_libraries(${LIBRARY_NAME} PRIVATE QtAVPlayer)
+# copy shared dependencies
+file(GLOB ${LIBRARY_NAME}_DEPENDENCIES "${CMAKE_BINARY_DIR}/QtAVPlayer/*.dll")
 
 # find_package(QtAVPlayer REQUIRED)
 
@@ -361,6 +363,11 @@ if(WIN32)
         list(APPEND WINDOWS_SHIBOKEN_SHARED_LIBRARIES "${library_path}")
     endforeach()
 
+    foreach(library_path ${${LIBRARY_NAME}_DEPENDENCIES})
+        string(REGEX REPLACE ".lib$" ".dll" library_path ${library_path})
+        file(TO_CMAKE_PATH ${library_path} library_path)
+        list(APPEND WINDOWS_SHIBOKEN_SHARED_LIBRARIES "${library_path}")
+    endforeach()
 
     # =============================================================================================
     # !!! End of dubious section.
@@ -378,14 +385,26 @@ message("libraryName " ${LIBRARY_NAME})
 # =============================================================================================
 # Install the library and the bindings module into the source folder near the main.py file, so
 # that the Python interpeter successfully imports the used module.
-# set(CMAKE_INSTALL_PREFIX ${CONSUMER_LIB_DIR})
-# message("CMAKE_CURRENT " ${CMAKE_CURRENT_SOURCE_DIR})
+
+
 install(TARGETS ${BINDING_NAME} ${LIBRARY_NAME}
         LIBRARY DESTINATION ${CONSUMER_LIB_DIR}
         RUNTIME DESTINATION ${CONSUMER_LIB_DIR}
         # INCLUDES DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}
 )
 install(FILES ${WINDOWS_SHIBOKEN_SHARED_LIBRARIES} DESTINATION ${CONSUMER_LIB_DIR})
+
+# Get the runtime dependencies of the shared library
+install(CODE "file(GET_RUNTIME_DEPENDENCIES
+                     RESOLVED_DEPENDENCIES_VAR resolved_deps
+                     UNRESOLVED_DEPENDENCIES_VAR unresolved_deps
+                     LIBRARIES \"${CMAKE_BINARY_DIR}/${LIBRARY_NAME}.lib\")")
+
+# Copy the resolved dependencies to the installation directory
+install(CODE "foreach(dep \${resolved_deps})
+                  file(INSTALL \"\${dep}\" DESTINATION \"${CONSUMER_LIB_DIR}\")
+              endforeach()")
+
 # =============================================================================================
 # !!! End of dubious section.
 # =============================================================================================
