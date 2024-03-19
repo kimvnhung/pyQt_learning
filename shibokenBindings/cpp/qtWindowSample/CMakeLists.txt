@@ -18,16 +18,13 @@ if(POLICY CMP0068)
 endif()
 
 # Get the name of the folder containing the CMakeLists.txt file
-get_filename_component(DYNAMIC_PR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
-
-# Consider changing the project name to something relevant for you.
-project(${DYNAMIC_PR_NAME})
 
 # ================================ General configuration ======================================
 set(CONSUMER_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../")
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Network Multimedia MultimediaWidgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Concurrent Multimedia MultimediaWidgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Concurrent Multimedia MultimediaWidgets)
 
 # ================================== Shiboken detection ======================================
 # Use provided python interpreter if given.
@@ -109,6 +106,8 @@ get_property(QT_WIDGETS_INCLUDE_DIRS TARGET Qt6::Widgets PROPERTY INTERFACE_INCL
 get_property(QT_MULTIMEDIA_INCLUDE_DIRS TARGET Qt6::Multimedia PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
 get_property(QT_MULTIMEDIA_WIDGETS_INCLUDE_DIRS TARGET Qt6::MultimediaWidgets PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
 get_property(QT_NETWORK_INCLUDE_DIRS TARGET Qt6::Network PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+get_property(QT_CORE_INCLUDE_DIRS TARGET Qt6::Core PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+get_property(QT_CONCURRENT_INCLUDE_DIRS TARGET Qt6::Concurrent PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
 set(INCLUDES "")
 foreach(INCLUDE_DIR ${QT_WIDGETS_INCLUDE_DIRS})
     list(APPEND INCLUDES "-I${INCLUDE_DIR}")
@@ -125,6 +124,15 @@ endforeach()
 foreach(INCLUDE_DIR ${QT_NETWORK_INCLUDE_DIRS})
     list(APPEND INCLUDES "-I${INCLUDE_DIR}")
 endforeach()
+
+foreach(INCLUDE_DIR ${QT_CORE_INCLUDE_DIRS})
+    list(APPEND INCLUDES "-I${INCLUDE_DIR}")
+endforeach()
+
+foreach(INCLUDE_DIR ${QT_CONCURRENT_INCLUDE_DIRS})
+    list(APPEND INCLUDES "-I${INCLUDE_DIR}")
+endforeach()
+
 
 # On macOS, check if Qt is a framework build. This affects how include paths should be handled.
 get_target_property(QtCore_is_framework Qt6::Core FRAMEWORK)
@@ -159,9 +167,14 @@ set(WRAPPED_HEADER ${SOURCE_DIR}/bindings.h)
 set(TYPESYSTEM_FILE ${CMAKE_CURRENT_BINARY_DIR}/bindings.xml)
 
 message("includes " ${INCLUDES})
+list(APPEND INCLUDES "-I${CMAKE_CURRENT_BINARY_DIR}")
 
-set(SHIBOKEN_OPTIONS --generator-set=shiboken --enable-parent-ctor-heuristic
-    --enable-pyside-extensions --enable-return-value-heuristic --use-isnull-as-nb_nonzero
+set(SHIBOKEN_OPTIONS
+    --generator-set=shiboken
+    --enable-parent-ctor-heuristic
+    --enable-pyside-extensions
+    --enable-return-value-heuristic
+    --use-isnull-as-nb_nonzero
     --avoid-protected-hack
     ${INCLUDES}
     -I${CMAKE_SOURCE_DIR}
@@ -176,6 +189,7 @@ set(GENERATED_SOURCES
     ${CMAKE_CURRENT_BINARY_DIR}/${BINDING_NAME}/icecream_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${BINDING_NAME}/truck_wrapper.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/${BINDING_NAME}/customwidget_wrapper.cpp
+    # ${CMAKE_CURRENT_BINARY_DIR}/${BINDING_NAME}/avplayermanager_wrapper.cpp
 )
 
 set(GENERATED_SOURCES_DEPENDENCIES
@@ -203,6 +217,7 @@ foreach(INCLUDE_DIR ${PYSIDE_INCLUDE_DIR})
     list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtMultimediaWidgets")
     list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtWidgets")
     list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtNetwork")
+    list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtConcurrent")
 endforeach()
 
 # =============================================================================================
@@ -219,29 +234,37 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # !!! End of dubious section.
 # =============================================================================================
 
-# ====================================== Custom Library =======================================
-add_subdirectory(QtAVPlayer)
-# find_package(QtAVPlayer REQUIRED)
-
-# ====================================== End Config Custom Lib ================================
 
 
 
 
 # Add the rest of the sources.
-add_library(${LIBRARY_NAME} SHARED ${SOURCES} ${HEADERS})
+add_library(${LIBRARY_NAME} ${SOURCES} ${HEADERS})
 target_link_libraries(${LIBRARY_NAME}
     PRIVATE
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets
+        Qt${QT_VERSION_MAJOR}::Concurrent
         Qt6::Multimedia
         Qt6::MultimediaWidgets
         Qt6::Network
-    PUBLIC
-        QtAVPlayer
 )
-target_include_directories(${LIBRARY_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(${LIBRARY_NAME}
+    PUBLIC
+        ${CMAKE_BINARY_DIR}
+)
+
+# ====================================== Custom Library =======================================
+set(ENABLE_MULTIMEDIA "TRUE")
+add_subdirectory(QtAVPlayer)
+target_link_libraries(${LIBRARY_NAME} PRIVATE QtAVPlayer)
+
+# find_package(QtAVPlayer REQUIRED)
+
+# ====================================== End Config Custom Lib ================================
+
+
 set_property(TARGET ${LIBRARY_NAME} PROPERTY PREFIX "")
 
 # Needed mostly on Windows to export symbols, and create a .lib file, otherwise the binding
@@ -251,23 +274,23 @@ target_include_directories(${LIBRARY_NAME} PRIVATE ${INCLUDES})
 target_include_directories(${LIBRARY_NAME} PUBLIC ${HEADERS})
 
 # ==================================== For testing ====================================
-set(TEST_PROGRAM ${PROJECT_NAME}_test)
-add_executable(${TEST_PROGRAM} main.cpp)
-target_link_libraries(${TEST_PROGRAM}
-    PRIVATE
-        Qt6::Core
-        Qt6::Gui
-        Qt6::Widgets
-        Qt6::Multimedia
-        Qt6::MultimediaWidgets
-        Qt6::Network
-        ${LIBRARY_NAME}
-)
+# set(TEST_PROGRAM ${PROJECT_NAME}_test)
+# add_executable(${TEST_PROGRAM} main.cpp)
+# target_link_libraries(${TEST_PROGRAM}
+#     PRIVATE
+#         Qt6::Core
+#         Qt6::Gui
+#         Qt6::Widgets
+#         Qt6::Multimedia
+#         Qt6::MultimediaWidgets
+#         Qt6::Network
+#         ${LIBRARY_NAME}
+# )
 
-target_include_directories(${TEST_PROGRAM}
-    PRIVATE
-        ${HEADERS}
-)
+# target_include_directories(${TEST_PROGRAM}
+#     PRIVATE
+#         ${HEADERS}
+# )
 
 
 # =======================================================================================
@@ -286,16 +309,18 @@ target_include_directories(${BINDING_NAME} PRIVATE ${PYSIDE_INCLUDE_DIR})
 target_include_directories(${BINDING_NAME} PRIVATE ${PYSIDE_ADDITIONAL_INCLUDES})
 target_include_directories(${BINDING_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
 target_include_directories(${BINDING_NAME} PRIVATE ${INCLUDES})
+# target_include_directories(${BINDING_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ffmpeg)
 
 target_link_libraries(${BINDING_NAME}
     PRIVATE
-        ${LIBRARY_NAME}
         Qt6::Core
         Qt6::Gui
+        Qt${QT_VERSION_MAJOR}::Concurrent
         Qt6::Widgets
         Qt6::Multimedia
         Qt6::MultimediaWidgets
         Qt6::Network
+        ${LIBRARY_NAME}
 )
 target_link_libraries(${BINDING_NAME} PRIVATE ${SHIBOKEN_MODULE_SHARED_LIBRARIES})
 target_link_libraries(${BINDING_NAME} PRIVATE ${PYSIDE_SHARED_LIBRARIES})
