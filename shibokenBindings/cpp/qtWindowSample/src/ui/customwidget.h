@@ -21,6 +21,7 @@ public:
     ~CustomWidget();
     void print(const char* msg);
     void play(const char* url);
+    void addCamera();
 public Q_SLOTS:
     void videoFrame(int index, const QAVVideoFrame &frame);
 private:

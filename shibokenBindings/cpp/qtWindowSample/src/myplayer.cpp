@@ -29,11 +29,12 @@ MyPlayer::~MyPlayer(){
 
 }
 
-void MyPlayer::play(const char* url)
+void MyPlayer::play(const char* url, int configs)
 {
     qDebug()<<__FUNCTION__<<"on play "<<url;
+    m_widget->addCamera();
     QAVPlayer *player = new QAVPlayer(this);
-    player->setSource(url);
+    player->setSource(url,configs);
     int index = m_players.size();
     connect(player,&QAVPlayer::videoFrame,[this,index](const QAVVideoFrame &frame){
         m_widget->videoFrame(index,frame);

@@ -74,20 +74,19 @@ public:
 
 #include <QtAVPlayer/qavplayer.h>
 
-int NUM_CAM_SIZE = 3;
 
 CustomWidget::CustomWidget()
 {
     QGridLayout *layout = new QGridLayout(this);
-    for(int row=0;row<NUM_CAM_SIZE;row++){
-        for(int col=0;col<NUM_CAM_SIZE;col++){
-            QVideoWidget* newWidget = new QVideoWidget(this);
-            m_listWidget.append(newWidget);
-            // QLabel* newWidget = new QLabel(this);
-            // newWidget->setText(QString("Hello %1,%2").arg(row).arg(col));
-            layout->addWidget(newWidget,row,col);
-        }
-    }
+    // for(int row=0;row<NUM_CAM_SIZE;row++){
+    //     for(int col=0;col<NUM_CAM_SIZE;col++){
+    //         QVideoWidget* newWidget = new QVideoWidget(this);
+    //         m_listWidget.append(newWidget);
+    //         // QLabel* newWidget = new QLabel(this);
+    //         // newWidget->setText(QString("Hello %1,%2").arg(row).arg(col));
+    //         layout->addWidget(newWidget,row,col);
+    //     }
+    // }
 
     setLayout(layout);
 }
@@ -138,4 +137,10 @@ void CustomWidget::videoFrame(int index,const QAVVideoFrame &frame)
 {
     QVideoFrame videoFrame = frame;
     m_listWidget.at(index)->videoSink()->setVideoFrame(videoFrame);
+}
+
+void CustomWidget::addCamera(){
+    QVideoWidget* newWidget = new QVideoWidget(this);
+    m_listWidget.append(newWidget);
+    layout()->addWidget(newWidget);
 }

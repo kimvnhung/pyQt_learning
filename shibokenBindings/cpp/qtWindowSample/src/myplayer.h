@@ -18,7 +18,7 @@ public:
 
     ~MyPlayer();
 
-    void play(const char* url);
+    void play(const char* url, int configs);
     void stop();
     CustomWidget* widget() const;
 private:
