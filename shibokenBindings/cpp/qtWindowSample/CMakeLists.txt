@@ -261,23 +261,23 @@ target_include_directories(${LIBRARY_NAME} PRIVATE ${INCLUDES})
 target_include_directories(${LIBRARY_NAME} PUBLIC ${HEADERS})
 
 # ==================================== For testing ====================================
-# set(TEST_PROGRAM ${PROJECT_NAME}_test)
-# add_executable(${TEST_PROGRAM} main.cpp)
-# target_link_libraries(${TEST_PROGRAM}
-#     PRIVATE
-#         Qt6::Core
-#         Qt6::Gui
-#         Qt6::Widgets
-#         Qt6::Multimedia
-#         Qt6::MultimediaWidgets
-#         Qt6::Network
-#         ${LIBRARY_NAME}
-# )
+set(TEST_PROGRAM ${PROJECT_NAME}_test)
+add_executable(${TEST_PROGRAM} main.cpp)
+target_link_libraries(${TEST_PROGRAM}
+    PRIVATE
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        Qt6::Multimedia
+        Qt6::MultimediaWidgets
+        Qt6::Network
+        ${LIBRARY_NAME}
+)
 
-# target_include_directories(${TEST_PROGRAM}
-#     PRIVATE
-#         ${HEADERS}
-# )
+target_include_directories(${TEST_PROGRAM}
+    PRIVATE
+        ${HEADERS}
+)
 
 
 # =======================================================================================

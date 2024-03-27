@@ -7,5 +7,10 @@
 <typesystem package="${PROJECT_NAME}" allow-thread="true">
     <load-typesystem name="typesystem_core_common.xml" generate="no"/>
     <load-typesystem name="typesystem_widgets.xml" generate="no"/>
+    <load-typesystem name="typesystem_opengl.xml" generate="no"/>
+    <load-typesystem name="typesystem_openglwidgets.xml" generate="no"/>
+
+    <value-type name="GLWidget">
+    </value-type>
 
 </typesystem>
