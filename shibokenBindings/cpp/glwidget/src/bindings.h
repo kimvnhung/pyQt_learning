@@ -4,7 +4,4 @@
 #ifndef BINDINGS_H
 #define BINDINGS_H
 
-#include "myplayer.h"
-
-
 #endif // BINDINGS_H

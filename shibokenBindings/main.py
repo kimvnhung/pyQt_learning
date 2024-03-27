@@ -29,7 +29,7 @@ class CustomWindow(QMainWindow):
         input_array = [input_string] * array_length
 
         for i in range(array_length):
-            self.myplayer.play("rtsp://admin:abcd1234@14.241.65.40:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif",Config.NoDelay)
+            self.myplayer.play("rtsp://admin:abcd1234@14.241.65.40:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif")
 
         # rtsp://admin:abcd1234@14.241.65.40:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif 
         # self.custom_widget.play("gst-pipeline:rtspsrc location=rtsp://admin:abcd1234@14.241.65.40:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif ! decodebin ! autovideosink")

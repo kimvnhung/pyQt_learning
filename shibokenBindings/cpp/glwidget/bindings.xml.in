@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<!--
+// Copyright (C) 2021 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
+-->
+<typesystem package="${PROJECT_NAME}" allow-thread="true">
+    <load-typesystem name="typesystem_core_common.xml" generate="no"/>
+    <load-typesystem name="typesystem_widgets.xml" generate="no"/>
+
+</typesystem>
