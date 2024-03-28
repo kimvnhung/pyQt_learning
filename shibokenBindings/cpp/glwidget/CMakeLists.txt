@@ -143,6 +143,7 @@ configure_file(bindings.xml.in bindings.xml)
 # Set the CPP files.
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 file(GLOB_RECURSE SOURCES ${SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE UI_FILES ${SOURCE_DIR}/*.ui)
 file(GLOB_RECURSE HEADERS ${SOURCE_DIR}/*.h)
 list(APPEND SOURCES ${GENERATED_SOURCES})
 
@@ -212,7 +213,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # =============================================================================================
 
 # Add the rest of the sources.
-add_library(${LIBRARY_NAME} SHARED ${SOURCES} ${HEADERS})
+add_library(${LIBRARY_NAME} SHARED ${SOURCES} ${HEADERS} ${UI_FILES})
 target_link_libraries(${LIBRARY_NAME}
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets

@@ -24,7 +24,7 @@ class CustomWindow(QMainWindow):
         options = {
             'rtsp_transport': 'tcp',
         }
-        current_stream_link = 'rtsp://admin:abcd1234@192.168.1.250'
+        current_stream_link = 'rtsp://admin:abcd1234@14.241.65.40:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif'
         container = av.open(current_stream_link, timeout=20, options=options)
         video_stream = next((s for s in container.streams if s.type == 'video'), None)
 
@@ -84,7 +84,7 @@ class CustomWindow(QMainWindow):
                 # break
                 # use OpenCV to show the frame
                 self.loop_count += 1
-                if self.loop_count > 1000:
+                if self.loop_count > 300:
                     return
             # break
        

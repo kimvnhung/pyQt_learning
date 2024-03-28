@@ -62,6 +62,7 @@ private:
     bool upload_tex;
     int width;
     int height;
+    float init_ratio;
     //char *pitch[3];
     QByteArray m_data;
     QImage m_image;

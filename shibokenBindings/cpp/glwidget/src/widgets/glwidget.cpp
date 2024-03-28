@@ -13,6 +13,7 @@ static const QMatrix4x4 yuv2rgb_bt601 =
         0.0f, 0.0f, 1.0f, -0.5f,
         0.0f, 0.0f, 0.0f, 1.0f);
 
+
 const GLfloat kVertices[] = {
     -1, 1,
     -1, -1,
@@ -261,11 +262,16 @@ void GLWidget::setRGBParameters(int w, int h)
 {
     QMutexLocker lock(&m_mutex);
     Q_UNUSED(lock);
+    if(width == w && height == h){
+        return;
+    }
     update_res = true;
     m_data.clear();
     m_image = QImage();
     width = w;
     height = h;
+    init_ratio = w*1.f/h;
+    m_mat.setToIdentity();
     plane.resize(1);
     Plane &p = plane[0];
     p.data = 0;
@@ -348,8 +354,22 @@ void GLWidget::initializeGL()
 void GLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
-    m_mat.setToIdentity();
-    //m_mat.ortho(QRectF(0, 0, w, h));
+    float new_ratio = w*1.f/h;
+    float scaleX,scaleY;
+    if(new_ratio > init_ratio){
+        scaleX = init_ratio/new_ratio;
+        scaleY = 1;
+    }else {
+        scaleX = 1;
+        scaleY = new_ratio/init_ratio;
+    }
+
+    m_mat = QMatrix4x4(
+            scaleX,0.f,0.f,0.f,
+            0.f,scaleY,0.f,0.f,
+            0.f,0.f,1.f,0.f,
+            0.f,0.f,0.f,1.f
+        );
 }
 
 void GLWidget::initializeShader()
@@ -393,8 +413,8 @@ void GLWidget::initializeShader()
     for (int i = 0; i < plane.size(); ++i) {
         QString tex_var = QString("u_Texture%1").arg(i);
         u_Texture[i] = m_program->uniformLocation(tex_var);
-        qDebug("glGetUniformLocation(\"%s\") = %d", tex_var.toUtf8().constData(), u_Texture[i]);
+        // qDebug("glGetUniformLocation(\"%s\") = %d", tex_var.toUtf8().constData(), u_Texture[i]);
     }
-    qDebug("glGetUniformLocation(\"u_MVP_matrix\") = %d", u_MVP_matrix);
-    qDebug("glGetUniformLocation(\"u_colorMatrix\") = %d", u_colorMatrix);
+    // qDebug("glGetUniformLocation(\"u_MVP_matrix\") = %d", u_MVP_matrix);
+    // qDebug("glGetUniformLocation(\"u_colorMatrix\") = %d", u_colorMatrix);
 }
