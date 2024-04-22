@@ -1,9 +1,11 @@
 #include "src/widgets/glwidget.h"
+#include "mainwindow.h"
 #include <QApplication>
 
-    int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
     QApplication a(argc, argv);
-        GLWidget *glWidget = new GLWidget();
-    glWidget->show();
+    MainWindow window;
+    window.show();
     return a.exec();
 }
