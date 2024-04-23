@@ -26,8 +26,8 @@ project(${DYNAMIC_PR_NAME})
 # ================================ General configuration ======================================
 set(CONSUMER_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Gui)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Gui)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Gui Multimedia MultimediaWidgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Gui Multimedia MultimediaWidgets)
 
 # ================================== Shiboken detection ======================================
 # Use provided python interpreter if given.
@@ -114,7 +114,7 @@ macro(add_qt_include_dirs)
 endmacro()
 
 set(INCLUDES "")
-add_qt_include_dirs(Core Widgets Gui)
+add_qt_include_dirs(Core Widgets Gui Multimedia MultimediaWidgets)
 message("INCLUDE ${INCLUDES}")
 
 # On macOS, check if Qt is a framework build. This affects how include paths should be handled.
@@ -228,7 +228,7 @@ target_link_libraries(${LIBRARY_NAME}
 
     # Qt${QT_VERSION_MAJOR}::Concurrent
     # Qt6::Multimedia
-    # Qt6::MultimediaWidgets
+    Qt6::MultimediaWidgets
     # Qt6::Network
 )
 target_include_directories(${LIBRARY_NAME}
@@ -246,15 +246,21 @@ target_include_directories(${LIBRARY_NAME} PUBLIC ${HEADERS})
 
 # ==================================== For testing ====================================
 set(TEST_PROGRAM ${PROJECT_NAME}_test)
-add_executable(${TEST_PROGRAM} main.cpp)
+add_executable(${TEST_PROGRAM} main.cpp mainwindow.h mainwindow.cpp mainwindow.ui
+    player.h player.cpp
+    qmediaplaylist.h qmediaplaylist.cpp
+    videowidget.h videowidget.cpp
+    playercontrols.h playercontrols.cpp
+    playlistmodel.h playlistmodel.cpp
+    qmediaplaylist_p.h qmediaplaylist_p.cpp
+    qplaylistfileparser.h qplaylistfileparser.cpp)
 target_link_libraries(${TEST_PROGRAM}
     PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
-
-    # Qt6::Multimedia
-    # Qt6::MultimediaWidgets
+    Qt6::Multimedia
+    Qt6::MultimediaWidgets
     # Qt6::Network
     ${LIBRARY_NAME}
 )

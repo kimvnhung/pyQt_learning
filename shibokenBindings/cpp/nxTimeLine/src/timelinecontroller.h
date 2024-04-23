@@ -17,6 +17,17 @@ public:
 
     ~TimeLineController();
 
+    void initData(qint64 duration);
+    void initData(qint64 endTime, qint64 duration);
+
+    QWidget* widget();
+
+public Q_SLOTS:
+    void setPosition();
+    void play();
+    void pause();
+    void resume();
+
 private:
     class Private;
     QSharedPointer<Private> d;

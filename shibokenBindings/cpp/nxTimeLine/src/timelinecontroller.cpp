@@ -44,3 +44,39 @@ TimeLineController::~TimeLineController()
 {
     d.clear();
 }
+
+void TimeLineController::initData(qint64 duration)
+{
+
+}
+
+void TimeLineController::initData(qint64 endTime, qint64 duration)
+{
+
+}
+
+QWidget* TimeLineController::widget()
+{
+    return NULL;
+}
+
+//slots
+void TimeLineController::setPosition()
+{
+
+}
+
+void TimeLineController::play()
+{
+
+}
+
+void TimeLineController::pause()
+{
+
+}
+
+void TimeLineController::resume()
+{
+
+}
