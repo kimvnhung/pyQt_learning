@@ -1,17 +1,21 @@
 #include "timelinecontroller.h"
+#include "widgets/timerplayback.h"
 
 class TimeLineController::Private {
 public:
-    Private()
+    Private(TimeLineController *owner):
+        owner(owner)
     {
 
     }
 
+    TimeLineController *owner;
 
+    TimerPlayback *timerPlayback;
 };
 
 TimeLineController::TimeLineController():
-    d(new Private())
+    d(new Private(this))
 {
 
 }
@@ -57,7 +61,7 @@ void TimeLineController::initData(qint64 endTime, qint64 duration)
 
 QWidget* TimeLineController::widget()
 {
-    return NULL;
+    return d->timerPlayback->widget();
 }
 
 //slots

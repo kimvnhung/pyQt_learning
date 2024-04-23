@@ -26,8 +26,8 @@ project(${DYNAMIC_PR_NAME})
 # ================================ General configuration ======================================
 set(CONSUMER_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Gui Multimedia MultimediaWidgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Gui Multimedia MultimediaWidgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Gui QuickWidgets Multimedia MultimediaWidgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Gui QuickWidgets Multimedia MultimediaWidgets)
 
 # ================================== Shiboken detection ======================================
 # Use provided python interpreter if given.
@@ -114,7 +114,7 @@ macro(add_qt_include_dirs)
 endmacro()
 
 set(INCLUDES "")
-add_qt_include_dirs(Core Widgets Gui Multimedia MultimediaWidgets)
+add_qt_include_dirs(Core Widgets Gui QuickWidgets Multimedia MultimediaWidgets)
 message("INCLUDE ${INCLUDES}")
 
 # On macOS, check if Qt is a framework build. This affects how include paths should be handled.
@@ -196,10 +196,10 @@ set(PYSIDE_ADDITIONAL_INCLUDES "")
 foreach(INCLUDE_DIR ${PYSIDE_INCLUDE_DIR})
     list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtCore")
     list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtGui")
-    # list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtMultimedia")
-    # list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtMultimediaWidgets")
+    list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtMultimedia")
+    list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtMultimediaWidgets")
     list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtWidgets")
-
+    list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtQuickWidgets")
     # list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtNetwork")
     # list(APPEND PYSIDE_ADDITIONAL_INCLUDES "${INCLUDE_DIR}/QtConcurrent")
 endforeach()
@@ -222,13 +222,13 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 add_library(${LIBRARY_NAME} SHARED ${SOURCES} ${HEADERS})
 target_link_libraries(${LIBRARY_NAME}
     PRIVATE
-    Qt6::Core
-    Qt6::Gui
-    Qt6::Widgets
-
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::QuickWidgets
     # Qt${QT_VERSION_MAJOR}::Concurrent
-    # Qt6::Multimedia
-    Qt6::MultimediaWidgets
+    Qt${QT_VERSION_MAJOR}::Multimedia
+    Qt${QT_VERSION_MAJOR}::MultimediaWidgets
     # Qt6::Network
 )
 target_include_directories(${LIBRARY_NAME}
@@ -256,11 +256,12 @@ add_executable(${TEST_PROGRAM} main.cpp mainwindow.h mainwindow.cpp mainwindow.u
     qplaylistfileparser.h qplaylistfileparser.cpp)
 target_link_libraries(${TEST_PROGRAM}
     PRIVATE
-    Qt6::Core
-    Qt6::Gui
-    Qt6::Widgets
-    Qt6::Multimedia
-    Qt6::MultimediaWidgets
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Multimedia
+    Qt${QT_VERSION_MAJOR}::MultimediaWidgets
+    Qt${QT_VERSION_MAJOR}::QuickWidgets
     # Qt6::Network
     ${LIBRARY_NAME}
 )
@@ -288,11 +289,12 @@ target_include_directories(${BINDING_NAME} PRIVATE ${INCLUDES})
 
 target_link_libraries(${BINDING_NAME}
     PRIVATE
-    Qt6::Core
-    Qt6::Widgets
-    Qt6::Gui
-    # Qt6::Multimedia
-    # Qt6::MultimediaWidgets
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Multimedia
+    Qt${QT_VERSION_MAJOR}::MultimediaWidgets
+    Qt${QT_VERSION_MAJOR}::QuickWidgets
 )
 target_link_libraries(${BINDING_NAME} PRIVATE ${SHIBOKEN_MODULE_SHARED_LIBRARIES})
 target_link_libraries(${BINDING_NAME} PRIVATE ${PYSIDE_SHARED_LIBRARIES})

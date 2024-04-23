@@ -5,6 +5,7 @@
 #define PLAYER_H
 
 #include "qmediaplaylist.h"
+#include "src/timelinecontroller.h"
 
 #include <QMediaMetaData>
 #include <QMediaPlayer>
@@ -94,6 +95,8 @@ private:
 
     QWidget *m_metaDataFields[QMediaMetaData::NumMetaData] = {};
     QLabel *m_metaDataLabels[QMediaMetaData::NumMetaData] = {};
+
+    TimeLineController *m_timeline_controller = NULL;
 };
 
 #endif // PLAYER_H
