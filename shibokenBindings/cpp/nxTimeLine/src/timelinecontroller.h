@@ -20,12 +20,12 @@ public:
     void initData(qint64 duration);
     void initData(qint64 endTime, qint64 duration);
 
-    void setMinimumSize(QSize size);
+    void setMinimumSize(int w, int h);
 
     QWidget* widget();
 
 public Q_SLOTS:
-    void setPosition();
+    void setPosition(qint64 position);
     void play();
     void pause();
     void resume();

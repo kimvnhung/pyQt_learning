@@ -60,9 +60,9 @@ void TimeLineController::initData(qint64 endTime, qint64 duration)
 
 }
 
-void TimeLineController::setMinimumSize(QSize size)
+void TimeLineController::setMinimumSize(int w,int h)
 {
-    d->timerPlayback->widget()->setMinimumSize(size);
+    d->timerPlayback->widget()->setMinimumSize(QSize(w,h));
 }
 
 QWidget* TimeLineController::widget()
@@ -71,9 +71,9 @@ QWidget* TimeLineController::widget()
 }
 
 //slots
-void TimeLineController::setPosition()
+void TimeLineController::setPosition(qint64 position)
 {
-
+    d->timerPlayback->setPosition(position);
 }
 
 void TimeLineController::play()

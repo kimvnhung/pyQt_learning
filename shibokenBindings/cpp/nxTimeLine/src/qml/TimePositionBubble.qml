@@ -8,6 +8,7 @@ Rectangle{
     color: "transparent"
 
     property color fillColor: "#e8e8e8"
+    property string position: "0:00:00"
 
     Rectangle{
         id: fill
@@ -44,7 +45,7 @@ Rectangle{
             pixelSize: 14
         }
 
-        text: qsTr("0:00:19")
+        text: position
     }
 
     Canvas {

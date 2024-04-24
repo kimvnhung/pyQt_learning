@@ -46,6 +46,7 @@ public:
     bool isVisible(qint64 value);
 
     double relativeWidth(qint64 value);
+    double relativePosition();
     qint64 startValueByUnit(qint64 unit);
     qint64 stopValueByUnit(qint64 unit);
     qint64 absoluteStart() const;
@@ -55,6 +56,9 @@ public:
 
     bool isMaximumScale() const;
 
+    bool setPosition(qint64 position);
+    qint64 position();
+
 signals:
     void widthPerMiliChanged();
     void widthChanged();
@@ -63,6 +67,7 @@ signals:
     void unitsChanged();
     void visibleWidthChanged();
     void contextChanged();
+    void visibleRangeChanged();
 
 private:
     qint64 m_totalTime;
@@ -76,6 +81,9 @@ private:
     double m_visibleWidth;
     qint64 m_visibleRange[2];
     qint64 m_absoluteVisibleRange[2];
+    qint64 m_position;
+
+    QTimer *m_delayTimer = NULL;
 
     void updateUnits();
     bool isRoundedBy(qint64 target, qint64 unit);

@@ -109,6 +109,7 @@ Item {
 
         RuleContextCapturedView {
             id: rule
+            model: instance.timeSteps
             width: parent.width
             height: 55
 
@@ -189,7 +190,7 @@ Item {
 
         MediaCursor{
             id: runningCusor
-
+            x: instance.relativePosition
             anchors{
                 top: rule.top
                 bottom: parent.bottom
@@ -211,6 +212,8 @@ Item {
                 bottom: rule.top
                 left: runningCusor.right
             }
+
+            position: instance.position
         }
 
     }

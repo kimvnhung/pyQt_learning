@@ -145,6 +145,40 @@ bool TimerPlayback::isMaximumScale() const
     return d->ctx->isMaximumScale();
 }
 
+void TimerPlayback::setPosition(qint64 position)
+{
+    if(d->ctx->setPosition(position))
+        emit positionChanged();
+}
+
+QString convertTimeToString(qint64 milliseconds)
+{
+    qint64 seconds = milliseconds / 1000;
+    qint64 days = seconds / (24 * 3600);
+    seconds = seconds % (24 * 3600);
+    qint64 hours = seconds / 3600;
+    seconds %= 3600;
+    qint64 minutes = seconds / 60;
+    seconds %= 60;
+    qint64 milliseconds_part = milliseconds % 1000;
+
+    return QString("%1:%2:%3:%4:%5").arg(days, 2, 10, QChar('0'))
+        .arg(hours, 2, 10, QChar('0'))
+        .arg(minutes, 2, 10, QChar('0'))
+        .arg(seconds, 2, 10, QChar('0'))
+        .arg(milliseconds_part, 3, 10, QChar('0'));
+}
+
+QString TimerPlayback::position() const
+{
+    return convertTimeToString(d->ctx->position());
+}
+
+double TimerPlayback::relativePosition() const
+{
+    return d->ctx->relativePosition();
+}
+
 //protected
 void TimerPlayback::registerQmlType()
 {

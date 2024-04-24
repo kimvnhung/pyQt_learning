@@ -10,7 +10,8 @@ public:
         offset(offset),
         unit(unit),
         lineType(lineType),
-        context(ctx)
+        context(ctx),
+        isVisible(true)
     {
         updateSubItems();
     }
@@ -24,19 +25,16 @@ public:
     RulerContext *context;
 
     int *delegateState;
+    bool isVisible;
 
     void updateSubItems();
     int getSubCount();
-    bool isVisible();
 };
 
 /*
  * Private Function
 */
-bool TimeStep::Private::isVisible()
-{
-    return context->isVisible(offset+unit);
-}
+
 void TimeStep::Private::updateSubItems()
 {
     if(subItems.empty() && lineType != EdgeType::UNDEFINED)
@@ -68,12 +66,11 @@ int TimeStep::Private::getSubCount()
     int secs = unit / 1000;
     int mins = unit / 60000;
     int hours = unit / (3600000);
+    int ds = unit / (86400000);
+    int ws = unit / (604800000);
 
     if(unit == 500){
         return 5;
-    }else if (secs == 1)
-    {
-        return 2;
     }
     else if (secs == 5 || mins == 5)
     {
@@ -91,9 +88,15 @@ int TimeStep::Private::getSubCount()
     {
         return 3;
     }
-    else if (mins == 1 || hours == 1)
+    else if (secs == 1 || mins == 1 || hours == 1 || ds == 1)
     {
         return 2;
+    }
+    else if(hours == 12){
+        return 4;
+    }
+    else if(ws == 1) {
+        return 7;
     }
 
     return 0;
@@ -108,6 +111,10 @@ TimeStep::TimeStep(RulerContext* context, qint64 offset, qint64 unit, EdgeType l
     d(new Private(this,context,offset,unit,lineType))
 {
     connect(d->context,&RulerContext::contextChanged,this,&TimeStep::onContextChanged);
+    connect(d->context,&RulerContext::visibleRangeChanged,[this]{
+        if(d->context->isVisible(value()))
+            d->isVisible = true;
+    });
 }
 
 TimeStep::~TimeStep()
@@ -118,8 +125,9 @@ TimeStep::~TimeStep()
 
 void TimeStep::onContextChanged()
 {
-    if(!d->isVisible())
+    if(!d->isVisible)
         return;
+
 
     if(unit() == context()->highestUnit())
         setLineType((int)EdgeType::HIGHEST);
@@ -134,6 +142,7 @@ void TimeStep::onContextChanged()
 
     d->updateSubItems();
     emit contextChanged();
+    d->isVisible = d->context->isVisible(value());
 }
 
 void TimeStep::setLineType(int value)

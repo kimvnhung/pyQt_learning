@@ -6,7 +6,6 @@ Rectangle{
     width: 2
     height: parent.height
     color: "transparent"
-    x: 100
 
     property color cursorColor: "white"
 
