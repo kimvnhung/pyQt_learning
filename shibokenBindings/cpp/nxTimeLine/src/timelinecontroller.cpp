@@ -18,7 +18,7 @@ public:
 TimeLineController::TimeLineController():
     d(new Private(this))
 {
-
+    connect(d->timerPlayback, &TimerPlayback::positionChanged,this,&TimeLineController::positionChanged);
 }
 
 TimeLineController::TimeLineController(const TimeLineController &other):

@@ -24,6 +24,9 @@ public:
 
     QWidget* widget();
 
+Q_SIGNALS:
+    void positionChanged(qint64 position);
+
 public Q_SLOTS:
     void setPosition(qint64 position);
     void play();

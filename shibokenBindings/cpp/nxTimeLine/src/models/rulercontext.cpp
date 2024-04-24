@@ -300,6 +300,19 @@ bool RulerContext::setPosition(qint64 position)
     return true;
 }
 
+bool RulerContext::setPositionFromMouseX(double mouseX)
+{
+    if(widthPerMili() == 0)
+        return false;
+    qint64 newPos = (qint64)((abs(m_x)+mouseX)/widthPerMili());
+
+    if(m_position == newPos)
+        return false;
+
+    m_position = newPos;
+    return true;
+}
+
 qint64 RulerContext::position()
 {
     return m_position;

@@ -14,11 +14,6 @@ Item {
         color: "black"
         clip: true
 
-
-        onHeightChanged: {
-            console.log("background height changed "+height)
-        }
-
         MouseArea{
             anchors{
                 left: parent.left
@@ -29,26 +24,26 @@ Item {
 
             hoverEnabled: true
             onPositionChanged: {
-                hoverCursor.x = mouseX
-
                 instance.mouseX = mouseX
                 if(pressed){
-                    if(mouseX > runningCusor.x)
-                        runningCusor.width = mouseX-runningCusor.x
+                    if(mouseX > hoverCursor.x)
+                        hoverCursor.width = mouseX-hoverCursor.x
                     else
                     {
-                        var oldWidth = runningCusor.width
-                        runningCusor.width = runningCusor.x-mouseX+oldWidth
-                        runningCusor.x = mouseX
+                        var oldWidth = hoverCursor.width
+                        hoverCursor.width = hoverCursor.x-mouseX+oldWidth
+                        hoverCursor.x = mouseX
                     }
-                }
+                }else if(hoverCursor.width == 2)
+                    hoverCursor.x = mouseX
 
 
             }
 
             onPressed: {
-                runningCusor.width = 2
-                runningCusor.x = mouseX
+                hoverCursor.width = 2
+                hoverCursor.x = mouseX
+                instance.pressedX = mouseX
             }
 
             onEntered: {
@@ -63,8 +58,6 @@ Item {
             onWheel: {
                 var ruleWidth = instance.ruleWidth
                 var ruleX = instance.viewX
-
-                // var cachedMouseX = mouseX
 
                 if(wheel.angleDelta.y < 0 && ruleWidth <= parent.width){
                     return
@@ -90,8 +83,6 @@ Item {
                     instance.ruleWidth = wn
                     instance.viewX = alphaN*xn_1+mouseX*(1-alphaN)
                 }
-
-                // instance.curPos = rule.getCurPosFromMouseX(cachedMouseX)
 
                 //calculate scrollbar size
                 if(wn/width > 100)
@@ -166,26 +157,8 @@ Item {
 
             onPositionChanged: {
                 instance.viewX = -position*instance.ruleWidth
-                // if(position == 0)
-                //     background.x = 0
-                // else if(position == 1-size && size !== 1)
-                //     background.x = -200
             }
 
-            onSizeChanged: {
-                // if(size === 1)
-                // {
-                //     background.width = root.width
-                //     background.x = 0
-                // }else{
-                //     background.width = root.width+200
-                //     background.x = -100
-                // }
-            }
-
-            onWidthChanged: {
-                console.log("ScrollSizeChanged "+width)
-            }
         }
 
         MediaCursor{

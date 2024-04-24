@@ -108,6 +108,8 @@ Player::Player(QWidget *parent) : QWidget(parent)
     m_timelineController = new TimeLineController();
     m_timelineController->setMinimumSize(200,150);
     m_timelineController->initData(123456);
+    connect(m_timelineController,&TimeLineController::positionChanged,m_player, &QMediaPlayer::setPosition);
+
     // m_timelineController.setMinimumSize
     layout->addWidget(m_timelineController->widget());
     QHBoxLayout *randTimeLayout = new QHBoxLayout;

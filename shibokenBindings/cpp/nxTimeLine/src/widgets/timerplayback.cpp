@@ -104,6 +104,17 @@ void TimerPlayback::setMouseX(double value)
         emit mouseXChanged();
 }
 
+double TimerPlayback::pressedX() const
+{
+    return d->ctx->relativePosition();
+}
+
+void TimerPlayback::setPressedX(double value)
+{
+    if(d->ctx->setPositionFromMouseX(value))
+        emit positionChanged(d->ctx->position());
+}
+
 double TimerPlayback::ruleWidth() const
 {
     return d->ctx->width();
@@ -148,7 +159,7 @@ bool TimerPlayback::isMaximumScale() const
 void TimerPlayback::setPosition(qint64 position)
 {
     if(d->ctx->setPosition(position))
-        emit positionChanged();
+        emit positionChanged(position);
 }
 
 QString convertTimeToString(qint64 milliseconds)

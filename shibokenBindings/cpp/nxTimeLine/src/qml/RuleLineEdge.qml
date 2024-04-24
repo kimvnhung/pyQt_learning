@@ -54,30 +54,30 @@ Column {
 
     function convertMillisecondsToString(duration) {
         // Convert milliseconds to seconds, minutes, hours, and remaining milliseconds
-        var totalWs = Math.floor(duration / 604800000);
-        var totalDays = Math.floor((duration%604800000)/86400000);
-        var totalHours = Math.floor((duration%86400000)/3600000);
-        var totalMinutes = Math.floor((duration % 3600000) / 60000);
-        var totalSeconds = Math.floor((duration % 60000) / 1000);
-        var totalMilliseconds = duration % 1000;
 
-        if(totalMilliseconds > 0){
+
+        var totalMilliseconds = duration % 1000;
+        if(totalMilliseconds > 0)
             return totalMilliseconds + "ms";
-        }
-        else if (totalSeconds > 0) {
+
+        var totalSeconds = Math.floor((duration % 60000) / 1000);
+        if(totalSeconds > 0)
             return totalSeconds + "s";
-        }
-        else if (totalMinutes > 0) {
+
+        var totalMinutes = Math.floor((duration % 3600000) / 60000);
+        if(totalMinutes > 0)
             return totalMinutes + "m";
-        }
-        else if (totalHours > 0) {
+
+        var totalHours = Math.floor((duration%86400000)/3600000);
+        if(totalHours > 0)
             return totalHours + "h";
-        }
-        else if(totalDays > 0) {
+
+        var totalDays = Math.floor((duration%604800000)/86400000);
+        if(totalDays > 0)
             return totalDays + "d";
-        }
-        else if(totalWs > 0) {
+
+        var totalWs = Math.floor(duration / 604800000);
+        if(totalWs > 0)
             return totalWs + "w";
-        }
     }
 }

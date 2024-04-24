@@ -57,6 +57,7 @@ public:
     bool isMaximumScale() const;
 
     bool setPosition(qint64 position);
+    bool setPositionFromMouseX(double mouseX);
     qint64 position();
 
 signals:
