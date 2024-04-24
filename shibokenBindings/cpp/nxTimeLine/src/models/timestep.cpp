@@ -1,5 +1,7 @@
 #include "timestep.h"
 
+#include <QElapsedTimer>
+
 class TimeStep::Private
 {
 public:
@@ -51,7 +53,6 @@ void TimeStep::Private::updateSubItems()
             }
 
             TimeStep *step = new TimeStep(context,offset+i*subUnit,subUnit,subLineType);
-            connect(context,&RulerContext::unitsChanged,step, &TimeStep::onContextChanged);
             subItems.append(step);
         }
 
@@ -132,6 +133,7 @@ void TimeStep::onContextChanged()
         setLineType((int)EdgeType::UNDEFINED);
 
     d->updateSubItems();
+    emit contextChanged();
 }
 
 void TimeStep::setLineType(int value)

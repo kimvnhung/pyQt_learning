@@ -32,19 +32,25 @@ Rectangle{
             model: instance.timeSteps
             TimeStepItem{
                 required property var modelData
+                required property int index
                 model: modelData
                 isRelative: true
                 delegate: TimeStepItemChooser{
                     isRelative: true
                 }
-            }
 
-            onModelChanged: {
-                console.log("model count "+model.length)
-                if(model.length > 0){
-                    console.log("value : "+model[0].value)
+                onWidthChanged: {
+                    if(index==0)
+                        console.log("newWidth: "+width)
                 }
             }
+
+            // onModelChanged: {
+            //     console.log("model count "+model.length)
+            //     if(model.length > 0){
+            //         console.log("value : "+model[0].value)
+            //     }
+            // }
         }
     }
 

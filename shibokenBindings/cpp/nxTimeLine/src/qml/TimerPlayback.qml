@@ -118,7 +118,6 @@ Item {
             }
 
             onWidthChanged: {
-                console.log("ruleWidthChanged "+width)
                 instance.ruleWidth = width
                 instance.viewX = 0
             }
