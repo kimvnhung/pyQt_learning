@@ -5,15 +5,16 @@
 double CHIGHEST_VISABLE_W = 250;
 double CMAXIMUM_SCALE_W = 800;
 qint64 CMS_LEVELS[] = {
-    5000,  // 5s
-    10000, // 10s
-    30000,
-    60000,
-    300000,
-    600000,
-    1800000,
-    3600000,
-    10800000};
+    5000,       // 5s
+    10000,      // 10s
+    30000,      // 30s
+    60000,      // 1min
+    300000,     // 5min
+    600000,     // 10min
+    1800000,    // 30min
+    3600000,    // 1h
+    10800000    // 3h
+};
 
 int CMS_LEVELS_SIZE = sizeof(CMS_LEVELS) / sizeof(qint64);
 
@@ -34,7 +35,10 @@ RulerContext::RulerContext(QObject *parent, qint64 totalTime, qint64 highestUnit
     m_width(width),
     m_x(x)
 {
-
+    connect(this,&RulerContext::totalTimeChanged,this,&RulerContext::contextChanged);
+    connect(this,&RulerContext::visibleWidthChanged,this,&RulerContext::contextChanged);
+    connect(this,&RulerContext::xChanged,this,&RulerContext::contextChanged);
+    connect(this,&RulerContext::widthChanged,this,&RulerContext::contextChanged);
 }
 
 RulerContext::~RulerContext()
@@ -49,6 +53,7 @@ double RulerContext::widthPerMili() const
 
 void RulerContext::setWidthPerMili(double value)
 {
+    qDebug()<<__FUNCTION__<<"value: "<<value<<"toalTime:"<<m_totalTime<<"width"<<m_width;
     if(m_widthPerMili == value)
         return;
 
@@ -63,13 +68,17 @@ qint64 RulerContext::totalTime() const
     return m_totalTime;
 }
 
-void RulerContext::setTotalTime(qint64 newTotalTime)
+bool RulerContext::setTotalTime(qint64 newTotalTime)
 {
+    qDebug()<<__FUNCTION__<<"newTotalTime:"<<newTotalTime;
     if(m_totalTime == newTotalTime)
-        return;
+        return false;
 
     m_totalTime = newTotalTime;
+    setWidthPerMili(m_width/m_totalTime);
+    updateUnits();
     emit totalTimeChanged();
+    return true;
 }
 
 double RulerContext::width() const
@@ -79,6 +88,7 @@ double RulerContext::width() const
 
 void RulerContext::setWidth(double newWidth)
 {
+    qDebug()<<__FUNCTION__<<"newWidth: "<<newWidth;
     if(m_width == newWidth)
         return;
 
@@ -94,6 +104,7 @@ double RulerContext::x() const
 
 void RulerContext::setX(double newX)
 {
+    qDebug()<<__FUNCTION__<<"newX:"<<newX;
     if(m_x == newX)
         return;
 
@@ -139,6 +150,7 @@ qint64 RulerContext::highestUnit() const
 
 void RulerContext::setHighestUnit(qint64 newHighestUnit)
 {
+    qDebug()<<__FUNCTION__<<"newHighestUnit:"<<newHighestUnit;
     m_highestUnit = newHighestUnit;
     refreshVisibleRange();
 }
@@ -160,12 +172,19 @@ qint64 RulerContext::roundedBy(qint64 target, qint64 unit)
 
 void RulerContext::setVisibleWidth(double newVisibleWidth)
 {
+    if(m_visibleWidth == newVisibleWidth)
+        return;
+
     m_visibleWidth = newVisibleWidth;
     refreshVisibleRange();
+    emit visibleWidthChanged();
 }
 
 void RulerContext::refreshVisibleRange()
 {
+    if(widthPerMili() == 0 || highestUnit() == 0)
+        return;
+
     qint64 startedValue = roundedBy(abs(m_x) / widthPerMili(), highestUnit());
     qint64 stopedValue = roundedBy((abs(m_x) + m_visibleWidth) / widthPerMili(), highestUnit()) + highestUnit();
     m_visibleRange[0] = startedValue;
@@ -237,15 +256,20 @@ void RulerContext::updateUnits()
 
     for (int i = 0; i < CMS_LEVELS_SIZE - 1; i++)
     {
-        qDebug() << "widthPerMili*CMS_LEVE" << m_widthPerMili * CMS_LEVELS[i];
+        qDebug()<<__FUNCTION__ << "widthPerMili*CMS_LEVE" << m_widthPerMili * CMS_LEVELS[i];
         if (m_widthPerMili * CMS_LEVELS[i] < CHIGHEST_VISABLE_W && CHIGHEST_VISABLE_W < m_widthPerMili * CMS_LEVELS[i + 1])
         {
-            m_highestUnit = CMS_LEVELS[i + 1];
+            setHighestUnit(CMS_LEVELS[i + 1]);
             break;
         }
 
         if (i == CMS_LEVELS_SIZE - 2)
-            m_highestUnit = CMS_LEVELS[0];
+        {
+            if(m_widthPerMili*CMS_LEVELS[0] > CHIGHEST_VISABLE_W)
+                setHighestUnit(CMS_LEVELS[0]);
+            else
+                setHighestUnit(CMS_LEVELS[CMS_LEVELS_SIZE-1]);
+        }
     }
 
     int *delegateState;
@@ -287,9 +311,9 @@ void RulerContext::updateUnits()
     int delegate1 = *(delegateState + 1);
     int delegate2 = *(delegateState + 2);
 
-    m_smallestUnit = m_highestUnit / (delegate0 * delegate1 * delegate2);
-    m_smallUnit = m_highestUnit / (delegate0 * delegate1);
-    m_normalUnit = m_highestUnit / (delegate0);
+    setSmallestUnit(m_highestUnit / (delegate0 * delegate1 * delegate2));
+    setSmallUnit(m_highestUnit / (delegate0 * delegate1));
+    setNormalUnit(m_highestUnit / (delegate0));
 
 
     emit unitsChanged();

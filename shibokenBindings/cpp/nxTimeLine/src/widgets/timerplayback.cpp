@@ -1,12 +1,15 @@
 #include "timerplayback.h"
 
-#include <chrono>
 #include <QQuickItem>
+#include <QQmlContext>
+#include <QElapsedTimer>
 
 class TimerPlayback::Private{
 public:
     Private(TimerPlayback *owner):
-        owner(owner)
+        owner(owner),
+        mouseX(0),
+        ctx(new RulerContext(owner))
     {
 
     }
@@ -19,23 +22,70 @@ public:
     RulerContext* ctx;
     QVector<TimeStep*> timeSteps;
 
-
+    void initTimeSteps();
+    bool setMouseX(double value);
 };
 
-TimerPlayback::TimerPlayback(QObject *parent, bool isInit):
-    base_type(QUrl(),parent)
+void TimerPlayback::Private::initTimeSteps()
 {
+    qDebug()<<__FUNCTION__;
+    QElapsedTimer timer;
+    qint64 start = timer.elapsed();
+    if(ctx->width() == 0 || ctx->visibleWidth() == 0)
+        return;
+
+
+    if(timeSteps.empty() && ctx->highestUnit() != 0)
+    {
+        int highestCount = ctx->totalTime()/ctx->highestUnit();
+        qDebug()<<__FUNCTION__<<"totalTime:"<<ctx->totalTime()<<"width:"<<ctx->width()<<"highestUnit:"<<ctx->highestUnit()<<"highestUnitWidth:"<<(ctx->highestUnit()*ctx->widthPerMili());
+        qDebug()<<"highestCount : "<<highestCount;
+        for(int i=0;i<highestCount+1;i++)
+        {
+            qint64 start2 = timer.elapsed();
+            TimeStep *step = new TimeStep(ctx,i*ctx->highestUnit(),ctx->highestUnit(),TimeStep::EdgeType::HIGHEST);
+            timeSteps.append(step);
+            qDebug()<<"time to create one step: "<<(timer.elapsed()-start2);
+
+        }
+        emit owner->timeStepsChanged();
+    }
+    qDebug()<<"time to init step: "<<(timer.elapsed()-start);
+}
+
+bool TimerPlayback::Private::setMouseX(double value)
+{
+    if(mouseX == value)
+        return false;
+
+    mouseX = value;
+    return true;
+}
+
+TimerPlayback::TimerPlayback(QObject *parent, bool isInit):
+    base_type(QUrl("qrc:/qml/TimerPlayback.qml"),parent),
+    d(new Private(this))
+{
+    if (isInit)
+    {
+        init();
+    }
 
 }
 
 TimerPlayback::~TimerPlayback()
 {
-
+    d.clear();
 }
 
-void TimerPlayback::setDuration(std::chrono::milliseconds duration)
+void TimerPlayback::setDuration(qint64 duration)
 {
 
+    if(d->ctx->setTotalTime(duration))
+    {
+        d->timeSteps.clear();
+        d->initTimeSteps();
+    }
 }
 
 QQmlListProperty<TimeStep> TimerPlayback::timeSteps()
@@ -50,7 +100,8 @@ double TimerPlayback::mouseX() const
 
 void TimerPlayback::setMouseX(double value)
 {
-
+    if(d->setMouseX(value))
+        emit mouseXChanged();
 }
 
 double TimerPlayback::ruleWidth() const
@@ -60,7 +111,7 @@ double TimerPlayback::ruleWidth() const
 
 void TimerPlayback::setRuleWidth(double value)
 {
-
+    d->ctx->setWidth(value);
 }
 
 double TimerPlayback::viewWidth() const
@@ -70,7 +121,8 @@ double TimerPlayback::viewWidth() const
 
 void TimerPlayback::setViewWidth(double value)
 {
-
+    qDebug()<<__FUNCTION__<<"viewWidth : "<<value;
+    d->ctx->setVisibleWidth(value);
 }
 
 double TimerPlayback::viewX() const
@@ -80,7 +132,7 @@ double TimerPlayback::viewX() const
 
 void TimerPlayback::setViewX(double value)
 {
-
+    d->ctx->setX(value);
 }
 
 QQuickWidget *TimerPlayback::widget() const
@@ -90,18 +142,26 @@ QQuickWidget *TimerPlayback::widget() const
 
 bool TimerPlayback::isMaximumScale() const
 {
-    return false;
+    return d->ctx->isMaximumScale();
 }
 
 //protected
 void TimerPlayback::registerQmlType()
 {
-
+    qmlRegisterType<RulerContext>("models",1,0,"RulerContext");
+    qmlRegisterType<TimeStep>("models",1,0,"TimeStep");
+    // qmlRegisterType<Ruler>("models", 1, 0, "Ruler");
+    // qmlRegisterUncreatableType<TimeStep>("models", 1, 0, "RuleLine", "Cannot create RuleLine in QML");
+    widget()->rootContext()->setContextProperty(QString("instance"), this);
 }
 
-void TimerPlayback::setUpQmlUrl(const QUrl &component)
+void TimerPlayback::setUpQmlUrl(const QUrl &componentUrl)
 {
+    widget()->setObjectName("TimerPlayback");
+    widget()->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    widget()->setSource(componentUrl);
 
+    qDebug()<<__FUNCTION__<<__LINE__;
 }
 
 QObject* TimerPlayback::rootObject() const

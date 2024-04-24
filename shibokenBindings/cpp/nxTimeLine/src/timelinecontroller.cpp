@@ -4,7 +4,8 @@
 class TimeLineController::Private {
 public:
     Private(TimeLineController *owner):
-        owner(owner)
+        owner(owner),
+        timerPlayback(new TimerPlayback(owner))
     {
 
     }
@@ -51,12 +52,17 @@ TimeLineController::~TimeLineController()
 
 void TimeLineController::initData(qint64 duration)
 {
-
+    d->timerPlayback->setDuration(duration);
 }
 
 void TimeLineController::initData(qint64 endTime, qint64 duration)
 {
 
+}
+
+void TimeLineController::setMinimumSize(QSize size)
+{
+    d->timerPlayback->widget()->setMinimumSize(size);
 }
 
 QWidget* TimeLineController::widget()

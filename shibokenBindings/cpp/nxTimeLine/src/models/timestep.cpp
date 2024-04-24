@@ -106,9 +106,12 @@ TimeStep::TimeStep(RulerContext* context, qint64 offset, qint64 unit, EdgeType l
     QObject{context},
     d(new Private(this,context,offset,unit,lineType))
 {
-    connect(context,&RulerContext::xChanged,this,&TimeStep::contextChanged);
-    connect(context,&RulerContext::widthChanged,this,&TimeStep::contextChanged);
-    connect(this,&TimeStep::contextChanged,this,&TimeStep::onContextChanged);
+    connect(d->context,&RulerContext::contextChanged,this,&TimeStep::onContextChanged);
+}
+
+TimeStep::~TimeStep()
+{
+    d.clear();
 }
 
 

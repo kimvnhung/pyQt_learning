@@ -20,6 +20,8 @@ public:
     void initData(qint64 duration);
     void initData(qint64 endTime, qint64 duration);
 
+    void setMinimumSize(QSize size);
+
     QWidget* widget();
 
 public Q_SLOTS:

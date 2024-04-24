@@ -20,7 +20,7 @@ public:
 
 
     qint64 totalTime() const;
-    void setTotalTime(qint64 newTotalTime);
+    bool setTotalTime(qint64 newTotalTime);
 
     double width() const;
     void setWidth(double newWidth);
@@ -61,7 +61,8 @@ signals:
     void xChanged();
     void totalTimeChanged();
     void unitsChanged();
-
+    void visibleWidthChanged();
+    void contextChanged();
 
 private:
     qint64 m_totalTime;

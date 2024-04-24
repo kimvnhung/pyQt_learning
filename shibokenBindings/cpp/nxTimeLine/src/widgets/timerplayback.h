@@ -21,7 +21,7 @@ class TimerPlayback : public QMLWidget
 public:
     explicit TimerPlayback(QObject *parent = nullptr,bool isInit = true);
     ~TimerPlayback();
-    void setDuration(std::chrono::milliseconds duration);
+    void setDuration(qint64 duration);
 
     QQmlListProperty<TimeStep> timeSteps();
 

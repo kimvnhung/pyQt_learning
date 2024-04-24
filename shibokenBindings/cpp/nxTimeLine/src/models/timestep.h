@@ -33,6 +33,7 @@ public:
                       qint64 offset = 0,
                       qint64 unit = 0,
                       EdgeType lineType = EdgeType::UNDEFINED);
+    ~TimeStep();
 
     RulerContext* context() const;
 

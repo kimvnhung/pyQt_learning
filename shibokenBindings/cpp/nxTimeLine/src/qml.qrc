@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/TimerPlayback.qml</file>
+        <file>qml/math_utils.js</file>
+        <file>qml/RuleContextCapturedView.qml</file>
+        <file>qml/TimeStepItem.qml</file>
+        <file>qml/RuleLineEdge.qml</file>
+        <file>qml/TimeStepItemChooser.qml</file>
+        <file>qml/TimeZoneRuler.qml</file>
+        <file>qml/ScrollCenterThumbnail.qml</file>
+        <file>qml/MediaCursor.qml</file>
+        <file>qml/TimePositionBubble.qml</file>
+    </qresource>
+</RCC>

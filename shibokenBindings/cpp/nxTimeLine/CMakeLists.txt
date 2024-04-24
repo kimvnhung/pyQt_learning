@@ -145,6 +145,7 @@ configure_file(bindings.xml.in bindings.xml)
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 file(GLOB_RECURSE SOURCES ${SOURCE_DIR}/*.cpp)
 file(GLOB_RECURSE HEADERS ${SOURCE_DIR}/*.h)
+file(GLOB_RECURSE RESOURCES ${SOURCE_DIR}/*.qrc)
 list(APPEND SOURCES ${GENERATED_SOURCES})
 
 # Set up the options to pass to shiboken.
@@ -219,7 +220,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # =============================================================================================
 
 # Add the rest of the sources.
-add_library(${LIBRARY_NAME} SHARED ${SOURCES} ${HEADERS})
+add_library(${LIBRARY_NAME} SHARED ${SOURCES} ${HEADERS} ${RESOURCES})
 target_link_libraries(${LIBRARY_NAME}
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Core

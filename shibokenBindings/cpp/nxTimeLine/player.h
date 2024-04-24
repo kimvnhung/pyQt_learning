@@ -96,7 +96,7 @@ private:
     QWidget *m_metaDataFields[QMediaMetaData::NumMetaData] = {};
     QLabel *m_metaDataLabels[QMediaMetaData::NumMetaData] = {};
 
-    TimeLineController *m_timeline_controller = NULL;
+    TimeLineController *m_timelineController = NULL;
 };
 
 #endif // PLAYER_H

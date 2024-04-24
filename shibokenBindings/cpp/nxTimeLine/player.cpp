@@ -23,6 +23,7 @@
 #include <QMediaMetaData>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QRandomGenerator>
 #include <QSlider>
 #include <QStandardPaths>
 #include <QStatusBar>
@@ -47,6 +48,7 @@ Player::Player(QWidget *parent) : QWidget(parent)
 
     //! [2]
     m_videoWidget = new VideoWidget(this);
+    m_videoWidget->setMinimumHeight(200);
     m_videoWidget->resize(1280, 720);
     m_player->setVideoOutput(m_videoWidget);
 
@@ -83,6 +85,29 @@ Player::Player(QWidget *parent) : QWidget(parent)
     m_labelDuration->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     hLayout->addWidget(m_labelDuration);
     layout->addLayout(hLayout);
+
+    //add timercontroller
+    m_timelineController = new TimeLineController();
+    m_timelineController->setMinimumSize(QSize(200,150));
+    m_timelineController->initData(123456);
+    // m_timelineController.setMinimumSize
+    layout->addWidget(m_timelineController->widget());
+    QHBoxLayout *randTimeLayout = new QHBoxLayout;
+    QLabel *showTimeRandom = new QLabel;
+    showTimeRandom->setAlignment(Qt::AlignHCenter);
+    QPushButton *button = new QPushButton("Random");
+    connect(button,&QPushButton::clicked,[showTimeRandom,this]{
+
+        // Generate a random positive qint64 number
+        qint64 randomNumber = QRandomGenerator::global()->bounded(5000,9999999);
+        showTimeRandom->setText(QString::number(randomNumber)+"   "+QTime(0,0).addMSecs(randomNumber).toString("hh:mm:ss:zzz"));
+        m_timelineController->initData(randomNumber);
+    });
+
+    randTimeLayout->addWidget(showTimeRandom);
+    randTimeLayout->addWidget(button);
+    layout->addLayout(randTimeLayout);
+
 
     // controls
     QBoxLayout *controlLayout = new QHBoxLayout;
@@ -214,6 +239,7 @@ bool Player::isPlayerAvailable() const
 
 void Player::open()
 {
+    qDebug()<<__FUNCTION__<<__LINE__;
     QFileDialog fileDialog(this);
     fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
     fileDialog.setWindowTitle(tr("Open Files"));
@@ -251,6 +277,8 @@ void Player::addToPlaylist(const QList<QUrl> &urls)
 
 void Player::durationChanged(qint64 duration)
 {
+    qDebug()<<__FUNCTION__<<__LINE__<<"duration : "<<duration;
+    m_timelineController->initData(duration);
     m_duration = duration / 1000;
     m_slider->setMaximum(duration);
 }
