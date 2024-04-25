@@ -26,6 +26,7 @@ public:
 
 Q_SIGNALS:
     void positionChanged(qint64 position);
+    void hoverPositionChanged(qint64 hoverPosition);
 
 public Q_SLOTS:
     void setPosition(qint64 position);

@@ -61,6 +61,7 @@ signals:
     void timeStepsChanged();
     void isMaximumScaleChanged();
     void positionChanged(qint64 position);
+    void hoverPositionChanged(qint64 hoverPosition);
 
 public slots:
     // double typeDistance(RuleLine::RuleLineType type);

@@ -102,6 +102,8 @@ void TimerPlayback::setMouseX(double value)
 {
     if(d->setMouseX(value))
         emit mouseXChanged();
+
+    emit hoverPositionChanged(d->ctx->positionFromMouseX(value));
 }
 
 double TimerPlayback::pressedX() const

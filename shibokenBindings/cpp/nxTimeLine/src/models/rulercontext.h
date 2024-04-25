@@ -58,6 +58,7 @@ public:
 
     bool setPosition(qint64 position);
     bool setPositionFromMouseX(double mouseX);
+    qint64 positionFromMouseX(double mouseX);
     qint64 position();
 
 signals:
