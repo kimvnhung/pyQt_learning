@@ -34,7 +34,8 @@ Item {
                         hoverCursor.width = hoverCursor.x-mouseX+oldWidth
                         hoverCursor.x = mouseX
                     }
-                }else if(hoverCursor.width == 2)
+                }
+                else if(hoverCursor.width === 2)
                     hoverCursor.x = mouseX
 
 
@@ -47,12 +48,16 @@ Item {
             }
 
             onEntered: {
-                hoverCursor.x = mouseX
-                hoverCursor.visible = true
+                if(hoverCursor.width === 2){
+                    hoverCursor.x = mouseX
+                    hoverCursor.visible = true
+                }
             }
 
             onExited: {
-                hoverCursor.visible = false
+                if(hoverCursor.width === 2){
+                    hoverCursor.visible = false
+                }
             }
 
             onWheel: {

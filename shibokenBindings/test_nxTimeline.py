@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Random Number Generator")
-        self.setGeometry(100, 100, 300, 150)
+        self.setGeometry(100, 100, 1200, 600)
 
         layout = QVBoxLayout()
 
